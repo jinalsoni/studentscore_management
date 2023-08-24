@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,3 +21,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/student/create', [StudentController::class, 'create'])->name('student.add');
+    Route::post('/student/store', [StudentController::class, 'store'])->name('student.store');
+    Route::get('/student/{standard?}', [StudentController::class, 'index'])->name('student.list');
+});
