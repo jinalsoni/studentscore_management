@@ -17,24 +17,24 @@ class StudentController extends Controller
                 ->where('user_id', Auth::user()->id)
                 ->orderBy('total_marks', 'desc')
                 ->get();
-
-            // Calculate ranks based on total marks
-            $rank = 1;
-            $prevTotalMarks = PHP_INT_MAX; // Set a large initial value
-
-            foreach ($students as $student) {
-                if ($student->total_marks < $prevTotalMarks) {
-                    $student->rank = $rank;
-                    $prevTotalMarks = $student->total_marks;
-                } else {
-                    // Students with the same total marks will have the same rank
-                    $student->rank = $rank - 1;
-                }
-
-                $rank++;
-            }
         } else {
-            $students = Student::where('user_id', Auth::user()->id)->get();
+            $students = Student::where('user_id', Auth::user()->id)->orderBy('total_marks', 'desc')->get();
+        }
+
+        // Calculate ranks based on total marks
+        $rank = 1;
+        $prevTotalMarks = PHP_INT_MAX; // Set a large initial value
+
+        foreach ($students as $student) {
+            if ($student->total_marks < $prevTotalMarks) {
+                $student->rank = $rank;
+                $prevTotalMarks = $student->total_marks;
+                $rank++;
+            } else {
+                // Students with the same total marks will have the same rank
+                $student->rank = $rank - 1;
+            }
+
         }
 
         return view('student.index', compact('students'));
